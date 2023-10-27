@@ -4,6 +4,7 @@ const ERR_LOG = './error.log';
 // 此处增加检查的错误 <名字, 错误内容的一部分>
 const FATAL_ERRORS = new Map([
   ['变量缺失', 'Cannot find name'],
+  ['空值警告', 'is possibly \'undefined\''],
 ]);
 
 /**
