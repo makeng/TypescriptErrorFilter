@@ -1,10 +1,15 @@
-const fs = require('fs/promises');
+import fs from 'fs/promises';
 
 const ERR_LOG = './error.log';
+const colorRed = '\x1b[91m';
+const colorCyan = '\x1b[36m';
+const colorYellow = '\x1b[43m';
+
 // 此处增加检查的错误 <名字, 错误内容的一部分>
 const FATAL_ERRORS = new Map([
-  ['变量缺失', 'Cannot find name'],
-  ['空值警告', 'is possibly \'undefined\''],
+  ['Cannot find name', { title: '变量缺失', color: colorRed }],
+  ['is possibly \'undefined\'', { title: '空值警告', color: colorCyan }],
+  ['not exported', { title: '没有导出', color: colorYellow }],
 ]);
 
 /**
@@ -19,13 +24,12 @@ function logFileReader(data) {
    * @return {(function(*, *): void)|*}
    */
   const createLogger = (line) => {
-    return (warning, key) => {
-      if (line.includes(warning))
-        // 处理每一行的逻辑
-        console.log(`${key}: `, line);
+    return ({ title, color }, partialContent) => {
+      // 处理每一行的逻辑
+      if (line.includes(partialContent))
+        console.log(color, `${title}: ${line}`);
     };
   };
-
   // 遍历每一行
   lines.forEach((line) => {
     FATAL_ERRORS.forEach(createLogger(line));
