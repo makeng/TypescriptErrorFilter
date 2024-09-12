@@ -3,13 +3,22 @@ import fs from 'fs/promises';
 const ERR_LOG = './error.log';
 const colorRed = '\x1b[91m';
 const colorCyan = '\x1b[36m';
-const colorYellow = '\x1b[43m';
+const colorOrange = '\x1b[38;5;208m';
 
 // 此处增加检查的错误 <名字, 错误内容的一部分>
 const FATAL_ERRORS = new Map([
+  // 语法
   ['Cannot find name', { title: '变量缺失', color: colorRed }],
-  ['is possibly \'undefined\'', { title: '空值警告', color: colorCyan }],
-  ['not exported', { title: '没有导出', color: colorYellow }],
+  ['Duplicate identifier', { title: '重复变量', color: colorRed }],
+  ['is possibly \'undefined\'', { title: '可能调用错误', color: colorCyan }],
+  ['has no initializer', { title: '未初始化', color: colorOrange }],
+  ['not exported', { title: '没有导出', color: colorRed }],
+  ['has no exported member', { title: '没有导出', color: colorRed }],
+  ['Cannot assign to', { title: '赋值失败', color: colorRed }],
+  // 业务逻辑
+  ['does not exist on type \'typeof FieldKey\'', { title: '列设置错误', color: colorRed }],
+  ['checkField', { title: '字段权限错误', color: colorRed }],
+  ['checkRight', { title: '功能权限错误', color: colorRed }],
 ]);
 
 /**
