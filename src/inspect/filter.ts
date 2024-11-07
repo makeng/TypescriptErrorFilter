@@ -1,4 +1,4 @@
-import fs from 'fs/promises';
+import * as fs from 'fs/promises';
 
 const ERR_LOG = './error.log';
 const colorRed = '\x1b[91m';
@@ -9,16 +9,16 @@ const colorOrange = '\x1b[38;5;208m';
 const FATAL_ERRORS = new Map([
   // 语法
   ['Cannot find name', { title: '变量缺失', color: colorRed }],
-  ['Duplicate identifier', { title: '重复变量', color: colorRed }],
+  ['Parsing error', { title: '编译错误', color: colorRed }],
+  ['Duplicate', { title: '重复标识符', color: colorRed }],
   ['is possibly \'undefined\'', { title: '可能调用错误', color: colorCyan }],
+  ['does not exist on', { title: '属性缺失', color: colorCyan }],
   ['has no initializer', { title: '未初始化', color: colorOrange }],
   ['not exported', { title: '没有导出', color: colorRed }],
   ['has no exported member', { title: '没有导出', color: colorRed }],
   ['Cannot assign to', { title: '赋值失败', color: colorRed }],
-  // 业务逻辑
-  ['does not exist on type \'typeof FieldKey\'', { title: '列设置错误', color: colorRed }],
-  ['checkField', { title: '字段权限错误', color: colorRed }],
-  ['checkRight', { title: '功能权限错误', color: colorRed }],
+  ['can only be used in', { title: '调用错误', color: colorRed }],
+  ['expected', { title: '代码不匹配', color: colorOrange }],
 ]);
 
 /**
@@ -26,7 +26,8 @@ const FATAL_ERRORS = new Map([
  * @param data
  */
 function logFileReader(data) {
-  const lines = data.split('\n'); // 将文件内容按行分割成数组
+  const groupMap = new Map<string, string[]>(); // 按照颜色分类
+  const lines = data.split(/[^\s]\n(?=\w+)/); // 将文件内容按行分割成数组
   /**
    * 为每行创建的打印器
    * @param line
@@ -34,14 +35,22 @@ function logFileReader(data) {
    */
   const createLogger = (line) => {
     return ({ title, color }, partialContent) => {
+      const targetGroup = groupMap.get(color) || [];
+      const lineLower = line.toLowerCase();
+      const findTxt = partialContent.toLowerCase();
       // 处理每一行的逻辑
-      if (line.includes(partialContent))
-        console.log(color, `${title}: ${line}`);
+      if (lineLower.includes(findTxt)) {
+        targetGroup.push(`${title}: ${line}`);
+        groupMap.set(color, targetGroup);
+      }
     };
   };
   // 遍历每一行
   lines.forEach((line) => {
     FATAL_ERRORS.forEach(createLogger(line));
+  });
+  groupMap.forEach((group, color) => {
+    console.log(color, group.join('\r\n'));
   });
 }
 
