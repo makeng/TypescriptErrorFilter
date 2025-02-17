@@ -6,15 +6,8 @@ export enum Color {
   Cyan = '\x1b[36m',
 }
 
-interface Config {
-  title: string;
-  color: Color;
-  /** 不区分大小写 */
-  matchCase?: boolean;
-}
-
 // Structure of an error item
 export interface FatalError {
   txtRegList: RegExp[];
-  config: Config;
+  title: string;
 }

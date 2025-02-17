@@ -1,49 +1,49 @@
 import * as fs from 'fs/promises';
-import { FatalError, Color } from './types';
-import { FATAL_ERRORS, Files } from './config';
+import { Color } from './types';
+import { ERROR_GROUP_MAP, Files } from './config';
 
-/**
- * 日志文件的阅读器
- * @param data 文件内容
- */
-function logFileReader(data: string) {
-  const colorsReverted = Object.values(Color).reverse();
-  const linesMap = new Map<Color, string[]>(colorsReverted.map((color) => [color, []])); // 找到的错误合集。按照颜色分类
-  const lines = data.split(/\S\n(?=\w+)/); // 将文件内容按行分割成数组
-  let cnt = 0;
+/* ----------------------------------------- main ----------------------------------------- */
+console.info('筛选出严重警告');
+readLogsInTargetFolder([Files.ERR_TS, Files.ERR_ESLINT]).then(errorLines => {
+  const errorMap = creatGroupedMap(errorLines); // Group the lines by color
+  errorMap.forEach((lines, color) => {
+    console.info(color, lines.join('\r\n'));
+  });
+});
 
-  /**
-   * 为每行创建的打印器
-   * @param line
-   */
-  const createLogger = (line: string) => {
-    return (item: FatalError) => {
-      const {
-        config: { title, color },
-        txtRegList,
-      } = item;
-      const targetGroup = linesMap.get(color) || [];
-      txtRegList.forEach((reg) => {
-        const isInTargetFolder = line.startsWith(Files.TARGET);
-        if (isInTargetFolder && reg.test(line)) {
-          targetGroup.push(`${title}: ${line}`);
-          linesMap.set(color, targetGroup);
-          cnt += 1;
-        }
-      });
-    };
-  };
-  // 遍历每一行
-  lines.forEach((line) => {
-    FATAL_ERRORS.forEach(createLogger(line));
-  });
-  linesMap.forEach((lines, color) => {
-    console.log(color, lines.join('\r\n'));
-  });
-  console.log(Color.Green, `筛选完成，共 ${cnt} 个`);
+
+/* ----------------------------------------- utils ----------------------------------------- */
+async function readLogsInTargetFolder(logFiles: string[]) {
+  const res: string[] = []; // Split the file content into lines
+  function pushIntoErrorLines(txt: string) {
+    const lines = txt.split(/\S\n(?=\w+)/); // 将文件内容按行分割成数组
+    lines.forEach((line) => {
+      if (line.startsWith(Files.TARGET))
+        res.push(line);
+    });
+  }
+
+  for (const file of logFiles) {
+    await fs.readFile(file, { encoding: 'utf8' }).then(pushIntoErrorLines);
+  }
+  return res;
 }
 
-console.info('筛选出严重警告');
-[Files.ERR_ESLINT, Files.ERR_TS].forEach((file) => {
-  fs.readFile(file, { encoding: 'utf8' }).then(logFileReader);
-});
+function creatGroupedMap(errorLines: string[]) {
+  const allColors = Object.values(Color).reverse(); // Place the most important color at the bottom for better readability.
+  const res = new Map<Color, string[]>(allColors.map((color) => [color, []]));
+
+  const collector = (line: string) =>
+    ERROR_GROUP_MAP.forEach((itemList, color) => {
+      itemList.forEach(({ title, txtRegList }) => {
+        txtRegList.forEach((reg) => {
+          const targetListOfColor = res.get(color) as string [];
+          if (reg.test(line)) {
+            targetListOfColor.push(`${title}: ${line}`);
+          }
+        });
+      });
+    });
+  errorLines.forEach(collector);
+  return res;
+}
