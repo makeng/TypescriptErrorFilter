@@ -60,4 +60,6 @@ export const Files = {
   ERR_TS: path.resolve(__dirname, '../dist/error-ts.log'),
   /** 错误日志-规范错误 */
   ERR_ESLINT: path.resolve(__dirname, '../dist/error-eslint.log'),
+  /** 错误日志-最终格式 */
+  ERR_LOG_JSON: path.resolve(__dirname, '../dist/error-log.json'),
 };
