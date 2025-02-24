@@ -1,0 +1,12 @@
+.report {
+  &__dot {
+    $width: 12px;
+    display: inline-block;
+    width: $width;
+    height: $width;
+    border-radius: 50%;
+    border: 2px solid #fff;
+    margin-right: 5px;
+    vertical-align: middle;
+  }
+}

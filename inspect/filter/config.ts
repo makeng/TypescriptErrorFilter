@@ -1,5 +1,5 @@
 import path from 'path';
-import { Color, FatalError } from './types';
+import { Color, FatalError } from '../utils';
 
 // 此处增加检查的错误 <错误内容的一部分字符, 标注的格式>
 export const ERROR_GROUP_MAP = new Map<Color, FatalError[]>([
