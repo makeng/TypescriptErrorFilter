@@ -3,4 +3,4 @@ NODE_OPTIONS=--max-old-space-size=8192 tsc --noEmit > ./inspect/dist/error-ts.lo
 # yarn run eslint . --ext .ts,.tsx --quiet >> ./inspect/dist/error-eslint.log; # 找严重的 ESLint 错误
 cd ./inspect; # 回到此目录
 bun filter/index.ts # 过滤日志文件
-npx webpack serve --config ./server/webpack.config.js
+npm run dev
