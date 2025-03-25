@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import './index.scss';
-import { Color } from '../../../utils';
+import { Color } from '../../../filter/utils';
 import Block from '../Block';
 import { DataItem } from '../../App';
 import { createBEM } from '../utils';

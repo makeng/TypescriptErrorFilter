@@ -7,9 +7,11 @@ export enum Color {
 }
 
 // Structure of an error item
-export interface FatalError {
-  txtRegList: RegExp[];
-  title: string;
+export class FatalError {
+  constructor(
+    public title: string,
+    public txtRegList: RegExp[],
+  ) {}
 }
 
 /**

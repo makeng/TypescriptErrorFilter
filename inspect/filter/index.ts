@@ -1,10 +1,11 @@
 import * as fs from 'fs/promises';
-import { Color, consoleColor } from '../utils';
-import { ERROR_GROUP_MAP, Files } from './config';
+import { Color, consoleColor } from './utils';
+import { Files } from './config';
+import { ERROR_GROUP_MAP } from '../index';
 
 /* ----------------------------------------- main ----------------------------------------- */
 consoleColor(Color.Green, '筛选出严重警告');
-readLogsInTargetFolder([Files.ERR_TS, Files.ERR_ESLINT]).then(errorLines => {
+readLogsInTargetFolder([Files.ERR_TS, Files.ERR_ESLINT]).then((errorLines) => {
   const errorMap = creatGroupedMap(errorLines); // Group the lines by color
   // 命令行中输出错误信息
   errorMap.forEach((lines, color) => consoleColor(color, lines.join('\n')));
@@ -12,15 +13,13 @@ readLogsInTargetFolder([Files.ERR_TS, Files.ERR_ESLINT]).then(errorLines => {
   fs.writeFile(Files.ERR_LOG_JSON, JSON.stringify(Object.fromEntries(errorMap), null, 2));
 });
 
-
 /* ----------------------------------------- utils ----------------------------------------- */
 async function readLogsInTargetFolder(logFiles: string[]) {
   const res: string[] = []; // Split the file content into lines
   function pushIntoErrorLines(txt: string) {
     const lines = txt.split(/\S\n(?=\w+)/); // 将文件内容按行分割成数组
     lines.forEach((line) => {
-      if (line.startsWith(Files.TARGET))
-        res.push(line);
+      if (line.startsWith(Files.TARGET)) res.push(line);
     });
   }
 
@@ -38,7 +37,7 @@ function creatGroupedMap(errorLines: string[]) {
     ERROR_GROUP_MAP.forEach((itemList, color) => {
       itemList.forEach(({ title, txtRegList }) => {
         txtRegList.forEach((reg) => {
-          const targetListOfColor = res.get(color) as string [];
+          const targetListOfColor = res.get(color) as string[];
           if (reg.test(line)) {
             targetListOfColor.push(`${title}: ${line}`);
           }

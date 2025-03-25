@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import Chart from './components/Chart';
 import Report from './components/Report';
 // fn
-import { Color } from '../utils';
+import { Color } from '../filter/utils';
 import { entries } from 'lodash-es';
 import errorReportJson from '../dist/error-log.json';
 
