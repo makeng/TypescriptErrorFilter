@@ -4,6 +4,7 @@ import { Color } from '../../../filter/utils';
 import Block from '../Block';
 import { DataItem } from '../../App';
 import { createBEM } from '../utils';
+import Toolbox from './Toolbox';
 
 interface Props {
   color: Color;
@@ -21,7 +22,11 @@ const Index: FC<Props> = (props) => {
           <div key={color}>
             <span><i className={bem('dot')} style={{ backgroundColor: color }} />{color}</span>
             <ul>
-              {lines.map(txt => <li>{txt}</li>)}
+              {lines.map(txt =>
+                <Toolbox txt={txt}>
+                  <li className={bem('item')}>{txt}</li>
+                </Toolbox>,
+              )}
             </ul>
           </div>
         );

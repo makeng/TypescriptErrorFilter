@@ -6,9 +6,10 @@
     "dev": "cd ./app; vite"
   },
   "devDependencies": {
+    "@arco-design/web-react": "^2.65.0",
     "@types/lodash-es": "^4.17.12",
-    "@types/node": "^22.13.9",
-    "@types/react": "^19.0.10",
+    "@types/node": "^22.13.13",
+    "@types/react": "^19.0.12",
     "@vitejs/plugin-legacy": "^6.0.2",
     "@vitejs/plugin-react": "^4.3.4",
     "classnames": "^2.5.1",
@@ -16,9 +17,9 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "recharts": "^2.15.1",
-    "sass-embedded": "^1.85.1",
+    "sass": "^1.86.0",
+    "sass-embedded": "^1.86.0",
     "typescript": "^5.8.2",
-    "vite": "^6.2.0",
     "vite-svg-loader": "^5.1.0"
   }
 }
