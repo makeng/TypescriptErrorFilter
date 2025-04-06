@@ -23,6 +23,6 @@ export function consoleColor(color: Color, ...args: any[]) {
     [Color.Orange, '\x1b[38;5;208m'],
     [Color.Green, '\x1b[32m'],
     [Color.Cyan, '\x1b[36m'],
-  ]);
-  return console.log(colorMap.get(color), ...args);
+  ])
+  return console.log(colorMap.get(color), ...args)
 }

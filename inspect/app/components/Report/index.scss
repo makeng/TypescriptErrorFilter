@@ -9,12 +9,14 @@
     margin-right: 5px;
     vertical-align: middle;
   }
-  &__item {
-    padding: 4px 8px;
-    border-radius: 4px;
-    transition: background-color 300ms;
-    &:hover {
-      background-color: #282a36;
-    }
+}
+
+.report-line {
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: background-color 300ms;
+
+  &--hover {
+    background-color: #282a36;
   }
 }

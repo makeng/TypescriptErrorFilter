@@ -1,5 +1,5 @@
 // 此处增加检查的错误 <错误内容的一部分字符, 标注的格式>
-import { Color, FatalError } from './filter/utils';
+import { Color, FatalError } from './filter/utils'
 
 export const ERROR_GROUP_MAP = new Map<Color, FatalError[]>([
   [
@@ -30,4 +30,4 @@ export const ERROR_GROUP_MAP = new Map<Color, FatalError[]>([
       new FatalError('可能调用错误', [/is possibly/i]),
     ],
   ],
-]);
+])

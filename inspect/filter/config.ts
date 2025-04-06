@@ -1,4 +1,4 @@
-import path from 'path';
+import path from 'path'
 
 // 对应的目录
 export const Files = {
@@ -10,6 +10,6 @@ export const Files = {
   ERR_ESLINT: path.resolve(__dirname, '../dist/error-eslint.log'),
   /** 错误日志-最终格式 */
   ERR_LOG_JSON: path.resolve(__dirname, '../dist/error-log.json'),
-};
+}
 
-console.log(Files);
+console.log(Files)

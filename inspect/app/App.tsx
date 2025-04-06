@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react'
 // ui
-import '@arco-design/web-react/dist/css/arco.css';
-import Chart from './components/Chart';
-import Report from './components/Report';
+import '@arco-design/web-react/dist/css/arco.css'
+import Chart from './components/Chart'
+import Report from './components/Report'
 // fn
-import { Color } from '../filter/utils';
-import { entries } from 'lodash-es';
-import errorReportJson from '../dist/error-log.json';
+import { Color } from '../filter/utils'
+import { entries } from 'lodash-es'
+import errorReportJson from '../dist/error-log.json'
 
 export type DataItem = {
   name: string;
@@ -16,28 +16,28 @@ export type DataItem = {
 }
 
 function App() {
-  const [color, setColor] = useState<Color>(Color.Red);
+  const [color, setColor] = useState<Color>(Color.Red)
   const data = entries(errorReportJson)
     .reverse()
     .map(([key, value]) => {
-      const color = key as Color;
+      const color = key as Color
       return ({
         name: key,
         value: value.length,
         color,
         lines: value,
-      }) satisfies DataItem;
-    });
+      }) satisfies DataItem
+    })
   useEffect(() => {
-    window.document.body.setAttribute('arco-theme', 'dark'); // 设置为暗黑主题
-  }, []);
-  console.log(data);
+    window.document.body.setAttribute('arco-theme', 'dark') // 设置为暗黑主题
+  }, [])
+  console.log(data)
   return (
-    <div className='app'>
+    <div className="app">
       <Chart list={data} onMouseEnterSection={({ color }) => setColor(color)} />
       <Report color={color} list={data} />
     </div>
-  );
+  )
 }
 
-export default App;
+export default App

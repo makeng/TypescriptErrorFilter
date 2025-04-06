@@ -18,5 +18,5 @@ interface Window {
   WWOpenData: Obj; // 企微的开放数据
   dd: Obj;
 }
-declare let wx: Window['wx'];
-declare let dd: Window['dd'];
+declare let wx: Window['wx']
+declare let dd: Window['dd']
