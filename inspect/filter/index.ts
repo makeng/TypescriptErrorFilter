@@ -34,12 +34,15 @@ function creatGroupedMap(errorLines: string[]) {
   const res = new Map<Color, string[]>(allColors.map((color) => [color, []]))
 
   const collector = (line: string) =>
-    ERROR_GROUP_MAP.forEach((itemList, color) => {
-      itemList.forEach(({ title, txtRegList }) => {
+    ERROR_GROUP_MAP.forEach((fatalError, color) => {
+      let isBreak = false
+      fatalError.forEach(({ title, txtRegList }) => {
+        if (isBreak) return
         txtRegList.forEach((reg) => {
           const targetListOfColor = res.get(color) as string[]
           if (reg.test(line)) {
             targetListOfColor.push(`${title}: ${line}`)
+            isBreak = true
           }
         })
       })

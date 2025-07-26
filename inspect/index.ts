@@ -5,14 +5,14 @@ export const ERROR_GROUP_MAP = new Map<Color, FatalError[]>([
   [
     Color.Red,
     [
-      new FatalError('模块丢失', [/not exported/i, /has .+ export.+/i, /Cannot find module/i]),
+      new FatalError('变量缺失', [/Cannot find name/i]),
+      new FatalError('模块丢失', [/not exported/i, /has .+ export.+/i, /Cannot find module/i, /not a module/i]),
       new FatalError('编译错误', [/Parsing error/i]),
       new FatalError('重复标识符', [/Duplicate/i, /multiple properties/i]),
       new FatalError('调用错误', [/Cannot assign to/i, /can only be/i]),
       // 业务-长期检查
       new FatalError('重要类型错误', [
         /CookieKey|TabType/,
-        /not exist on type 'typeof (FieldKey|FundBillType|OrderBillType)/,
       ]),
     ],
   ],
@@ -21,7 +21,7 @@ export const ERROR_GROUP_MAP = new Map<Color, FatalError[]>([
     [
       new FatalError('未初始化', [/has no initializer/i]),
       new FatalError('代码不匹配', [/expected/i, /Don't use/i]),
-      new FatalError('变量缺失', [/Cannot find name/i, /not exist on/i, /required in/i]),
+      new FatalError('属性缺失', [/not exist on/i, /required in/i]),
     ],
   ],
   [
