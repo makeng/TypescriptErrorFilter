@@ -11,6 +11,9 @@ interface Props {
 
 const bem = createBEM('page-block')
 
+/**
+ * 块级组件。纯样式，就是卡片的外层
+ */
 const Index: FC<Props> = ({ title, className, children }) => {
   return (
     <div className={bem()}>

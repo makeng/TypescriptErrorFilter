@@ -10,6 +10,9 @@ interface Props {
 
 const bem = createBEM('report-line')
 
+/**
+ * 一行错误信息
+ */
 const Index: React.FC<Props> = (props) => {
   const { txt, isHover } = props
   const [isToolboxShow, setIsToolboxShow] = useState(false)
