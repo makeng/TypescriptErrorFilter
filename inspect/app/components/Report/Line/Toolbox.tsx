@@ -10,7 +10,7 @@ interface Props {
   onChangeShow(nextShow: boolean): void;
 }
 
-const FILE_REG = /[\w\/.-]+\.[j|t]sx?\(.+\)/
+const FILE_REG = /[\w\/.-]+\.[j|t]sx?\([\d,Z]+\)/
 const toastSuccess = (msg: string) => message.success(msg)
 
 const Toolbox: React.FC<PropsWithChildren<Props>> = (props) => {
@@ -29,7 +29,7 @@ const Toolbox: React.FC<PropsWithChildren<Props>> = (props) => {
         const txtMathed = txt.match(FILE_REG)
         const path = head(txtMathed) || ''
         navigator.clipboard.writeText(path)
-        toastSuccess(`${text} copied!`)
+        toastSuccess(`${text} copied}!`)
       },
     },
     {
