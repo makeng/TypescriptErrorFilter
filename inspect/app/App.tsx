@@ -4,9 +4,9 @@ import '@arco-design/web-react/dist/css/arco.css'
 import Chart from './components/Chart'
 import Report from './components/Report'
 // fn
-import { Color } from '../filter/utils'
 import { entries } from 'lodash-es'
 import errorReportJson from '../dist/error-log.json'
+import { Color } from '../filter/types'
 
 export type DataItem = {
   name: string;

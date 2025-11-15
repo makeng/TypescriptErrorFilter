@@ -1,12 +1,12 @@
 import { FC, useEffect, useRef, useState } from 'react'
 import './index.scss'
-import { Color } from '../../../filter/utils'
 import Block from '../Block'
 import { DataItem } from '../../App'
 import { createBEM } from '../../utils/bem'
 import Line from './Line'
 import { sleep } from '../../utils/time'
 import Dot from './Dot'
+import { Color } from '../../../filter/types'
 
 interface Props {
   color: Color;
