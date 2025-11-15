@@ -23,16 +23,22 @@ export function consoleColor(color: Color, ...args: any[]) {
  */
 export async function readLogsInTargetFolder(logFiles: string[]) {
   const res: string[] = [] // Split the file content into lines
-  function pushIntoErrorLines(txt: string) {
-    const lines = txt.split(/\S\n(?=\w+)/) // 将文件内容按行分割成数组
+  const pushIntoErrorLines = (txt: string) => {
+    // 使用 \n 分割，速度更快且符合“按行分割”的意图
+    const lines = txt.split('\n')
     lines.forEach((line) => {
-      if (line.startsWith(Files.TARGET)) res.push(line)
+      if (line && line.startsWith(Files.TARGET)) {
+        res.push(line)
+      }
     })
   }
 
-  for (const file of logFiles) {
-    await fs.readFile(file, { encoding: 'utf8' }).then(pushIntoErrorLines)
-  }
+  // 3. [优化] 使用 Promise.all 并行读取所有文件
+  const allFilePromises = logFiles.map(file =>
+    fs.readFile(file, { encoding: 'utf8' }).then(pushIntoErrorLines),
+  )
+
+  await Promise.all(allFilePromises)
   return res
 }
 
