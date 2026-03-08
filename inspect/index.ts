@@ -1,6 +1,6 @@
-// 此处增加检查的错误 <错误内容的一部分字符, 标注的格式>
-import { Color, FatalError } from './filter/types'
+import { Color, FatalError } from './filter/types';
 
+// 此处增加检查的错误 <错误内容的一部分字符, 标注的格式>
 export const ERROR_GROUP_MAP = new Map<Color, FatalError[]>([
   [
     Color.Red,
@@ -12,7 +12,16 @@ export const ERROR_GROUP_MAP = new Map<Color, FatalError[]>([
       new FatalError('模块丢失', [/not exported/i, /has .+ export.+/i, /Cannot find module/i, /not a module/i]),
       new FatalError('编译错误', [/Parsing error/i, /compiler/i]),
       new FatalError('重复标识符', [/Duplicate/i, /multiple properties/i]),
-      new FatalError('调用错误', [/Cannot assign to/i, /can only be/i, /void function/i]),
+      new FatalError('调用错误', [/Cannot assign to/i, /can only be/i, /void function/i, /Unreachable/i]),
+      // 业务-长期检查
+      new FatalError('重要类型错误', [
+        // 全局
+        /CookieKey|TabType|clientApi|AllApiType/,
+        /not exist on type 'typeof (FieldKey|FundBillType|OrderBillType)/,
+        // 库
+        /dayjs|DayjsWithTZ/,
+      ]),
+      // 业务-短期
     ],
   ],
   [
@@ -24,4 +33,4 @@ export const ERROR_GROUP_MAP = new Map<Color, FatalError[]>([
     ],
   ],
   [Color.Cyan, [new FatalError('可能调用错误', [/is possibly/i])]],
-])
+]);
