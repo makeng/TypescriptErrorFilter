@@ -17,3 +17,14 @@ code {
   overflow: hidden;
   color: white;
 }
+
+.charts-row {
+  display: flex;
+  flex-direction: row;
+  gap: 16px;
+  padding: 16px;
+}
+
+.charts-row > * {
+  flex: 1;
+}
