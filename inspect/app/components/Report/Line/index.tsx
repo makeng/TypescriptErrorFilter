@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import Toolbox from './Toolbox'
 import { createBEM } from '../../../utils/bem'
 

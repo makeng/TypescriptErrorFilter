@@ -1,4 +1,4 @@
-import React, { PropsWithChildren } from 'react'
+import { PropsWithChildren } from 'react'
 import { Button, Popover } from '@arco-design/web-react'
 import { message } from '../../Message'
 import { IconCopy } from '@arco-design/web-react/icon'
@@ -29,7 +29,7 @@ const Toolbox: React.FC<PropsWithChildren<Props>> = (props) => {
         const txtMathed = txt.match(FILE_REG)
         const path = head(txtMathed) || ''
         navigator.clipboard.writeText(path)
-        toastSuccess(`${text} copied}!`)
+        toastSuccess(`${text} copied!`)
       },
     },
     {

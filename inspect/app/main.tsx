@@ -1,4 +1,4 @@
-import React from 'react'
+// React 17+ 不需要显式导入 React
 import ReactDOM from 'react-dom/client'
 
 import './index.css'

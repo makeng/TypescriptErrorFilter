@@ -13,8 +13,11 @@ const ANSI_COLOR_MAP = new Map<Color, string>([
 /**
  * Print colorful message
  */
-export function consoleColor(color: Color, ...args: any[]) {
-  return console.log(ANSI_COLOR_MAP.get(color), ...args)
+export function consoleColor(color: Color, ...args: unknown[]) {
+  const ansiCode = ANSI_COLOR_MAP.get(color)
+  if (ansiCode) {
+    console.log(ansiCode, ...args)
+  }
 }
 
 /**

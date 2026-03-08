@@ -1,11 +1,10 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 // ui
 import '@arco-design/web-react/dist/css/arco.css'
 import Chart from './components/Chart'
 import Report from './components/Report'
 // fn
 import { entries } from 'lodash-es'
-import errorReportJson from '../dist/error-log.json'
 import { Color } from '../filter/types'
 
 export type DataItem = {
@@ -15,16 +14,24 @@ export type DataItem = {
   lines: string[];
 }
 
+// 定义 JSON 数据的类型
+interface ErrorLogJson {
+  [key: string]: string[];
+}
+
+// 使用 import 导入 JSON 文件 (Vite 支持)
+import errorReportJson from '../dist/error-log.json'
+
 function App() {
   const [color, setColor] = useState<Color>(Color.Red)
-  const data = entries(errorReportJson)
+  const data = entries(errorReportJson as ErrorLogJson)
     .reverse()
     .map(([key, value]) => {
-      const color = key as Color
+      const itemColor = key as Color
       return ({
         name: key,
         value: value.length,
-        color,
+        color: itemColor,
         lines: value,
       }) satisfies DataItem
     })

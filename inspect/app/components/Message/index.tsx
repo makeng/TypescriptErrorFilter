@@ -1,4 +1,4 @@
-import React, { ReactNode, useEffect, useState } from 'react'
+import { ReactNode, useEffect, useState } from 'react'
 import { createRoot } from 'react-dom/client'
 import { IconCheckSquare } from '@arco-design/web-react/icon'
 import { EscapeStr } from '../../utils/const'
@@ -74,7 +74,7 @@ const styles: Record<string, React.CSSProperties> = {
 }
 
 const iconMap = new Map<MessageType, ReactNode>([
-  ['success', <IconCheckSquare />],
+  ['success', <IconCheckSquare key="success-icon" />],
 ])
 
 const init = () => {

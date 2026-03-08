@@ -1,12 +1,12 @@
-import { FC } from 'react'
+import { FC, MouseEvent } from 'react'
 import './index.scss'
-import { Cell, Pie, PieChart } from 'recharts'
+import { Cell, Pie, PieChart, PieLabelRenderProps, PieSectorDataItem } from 'recharts'
 import Block from '../Block'
 import { DataItem } from '../../App'
 
 interface Props {
   list: DataItem[];
-  onMouseEnterSection(list: DataItem): void;
+  onMouseEnterSection(item: DataItem): void;
 }
 
 const prefixCls = 'inspect-pie-chart'
@@ -19,14 +19,22 @@ const enum ChartSize {
 const Index: FC<Props> = (props) => {
   const { list } = props
 
-  function renderLabel({ cx, cy, midAngle, innerRadius, outerRadius, percent, index }) {
-    const radius = innerRadius + (outerRadius - innerRadius) + 30
-    const x = cx + radius * Math.cos(-midAngle * RADIAN)
-    const y = cy + radius * Math.sin(-midAngle * RADIAN)
-    const percentStr = `${(percent * 100).toFixed(0)}%`
-    const { value, color } = list[index] || {}
+  function renderLabel({ cx, cy, midAngle, innerRadius, outerRadius, percent, index }: PieLabelRenderProps) {
+    const safeCx = cx ?? 0
+    const safeCy = cy ?? 0
+    const safeMidAngle = midAngle ?? 0
+    const safeInnerRadius = innerRadius ?? 0
+    const safeOuterRadius = outerRadius ?? 0
+    const safePercent = percent ?? 0
+    const safeIndex = index ?? 0
+
+    const radius = safeInnerRadius + (safeOuterRadius - safeInnerRadius) + 30
+    const x = safeCx + radius * Math.cos(-safeMidAngle * RADIAN)
+    const y = safeCy + radius * Math.sin(-safeMidAngle * RADIAN)
+    const percentStr = `${(safePercent * 100).toFixed(0)}%`
+    const { value, color } = list[safeIndex] || {}
     return (
-      <text x={x} y={y} fill="white" textAnchor={x > cx ? 'start' : 'end'} dominantBaseline="central">
+      <text x={x} y={y} fill="white" textAnchor={x > safeCx ? 'start' : 'end'} dominantBaseline="central">
         {`${color}: ${value} (${percentStr})`}
       </text>
     )
@@ -43,7 +51,12 @@ const Index: FC<Props> = (props) => {
           paddingAngle={5}
           label={renderLabel}
           dataKey="value"
-          onMouseEnter={props.onMouseEnterSection}
+          onMouseEnter={(_data: PieSectorDataItem, index: number, _e: MouseEvent<SVGGraphicsElement>) => {
+            const item = list[index]
+            if (item) {
+              props.onMouseEnterSection(item)
+            }
+          }}
         >
           {list.map((entry, index) => (
             <Cell key={index} fill={entry.color} />
