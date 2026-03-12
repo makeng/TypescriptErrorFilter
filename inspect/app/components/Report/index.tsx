@@ -42,7 +42,7 @@ const Index: FC<Props> = (props) => {
   }, [hoverKey])
 
   return (
-    <Block className={bem()} title="Report">
+    <Block contentClassName={bem()} title="Report">
       {list.map(({ color, lines }, index) => {
         return (
           <div key={color}>

@@ -1,12 +1,14 @@
 import { useEffect, useState } from 'react'
 // ui
 import '@arco-design/web-react/dist/css/arco.css'
-import Chart from './components/ChartOfPie'
+import ChartOfPie from './components/ChartOfPie'
 import Report from './components/Report'
-import BarChart from './components/ChartOfBar'
+import ChartOfBar from './components/ChartOfBar'
 // fn
 import { entries } from 'lodash-es'
 import { Color } from '../filter/types'
+// 使用 import 导入 JSON 文件 (Vite 支持)
+import errorReportJson from '../dist/error-log.json'
 
 export type DataItem = {
   name: string;
@@ -19,9 +21,6 @@ export type DataItem = {
 interface ErrorLogJson {
   [key: string]: string[];
 }
-
-// 使用 import 导入 JSON 文件 (Vite 支持)
-import errorReportJson from '../dist/error-log.json'
 
 function App() {
   const [color, setColor] = useState<Color>(Color.Red)
@@ -48,9 +47,9 @@ function App() {
   console.log(data)
   return (
     <div className="app">
-      <div className="charts-row">
-        <Chart list={data} onMouseEnterSection={({ color }) => setColor(color)} />
-        <BarChart totalWarnings={totalWarnings} />
+      <div className="flex">
+        <ChartOfPie className="flex-1" list={data} onMouseEnterSection={({ color }) => setColor(color)} />
+        <ChartOfBar className="flex-1" totalWarnings={totalWarnings} />
       </div>
       <Report color={color} list={data} />
     </div>

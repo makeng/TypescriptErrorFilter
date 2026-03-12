@@ -6,14 +6,15 @@ import { prefixCls, useWarningHistory } from './utils'
 
 interface Props {
   totalWarnings: number;
+  className?: string;
 }
 
 const Index: FC<Props> = (props) => {
-  const { totalWarnings } = props
+  const { className, totalWarnings } = props
   const history = useWarningHistory(totalWarnings)
 
   return (
-    <Block className={prefixCls} title="History">
+    <Block className={className} contentClassName={prefixCls} title="History">
       <ResponsiveContainer width="100%" height={200}>
         <BarChart data={history} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
           <CartesianGrid strokeDasharray="3 3" stroke="#444" />

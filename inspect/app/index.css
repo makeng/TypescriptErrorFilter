@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Fira Sans', 'Droid Sans',
@@ -16,15 +20,4 @@ code {
   background-color: #282a36;
   overflow: hidden;
   color: white;
-}
-
-.charts-row {
-  display: flex;
-  flex-direction: row;
-  gap: 16px;
-  padding: 16px;
-}
-
-.charts-row > * {
-  flex: 1;
 }

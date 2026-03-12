@@ -4,7 +4,8 @@ import classnames from 'classnames'
 import { createBEM } from '../../utils/bem'
 
 interface Props {
-  className: string;
+  className?: string;
+  contentClassName: string;
   title?: string;
   children: ReactNode;
 }
@@ -14,11 +15,11 @@ const bem = createBEM('page-block')
 /**
  * 块级组件。纯样式，就是卡片的外层
  */
-const Index: FC<Props> = ({ title, className, children }) => {
+const Index: FC<Props> = ({ title, className, contentClassName, children }) => {
   return (
-    <div className={bem()}>
+    <div className={classnames(bem(), className)}>
       {title && <div className={bem('title')}>{title}</div>}
-      <div className={classnames(bem('content'), className)}>{children}</div>
+      <div className={classnames(bem('content'), contentClassName)}>{children}</div>
     </div>
   )
 }

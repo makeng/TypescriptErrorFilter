@@ -7,6 +7,7 @@ import { DataItem } from '../../App'
 interface Props {
   list: DataItem[];
   onMouseEnterSection(item: DataItem): void;
+  className?: string;
 }
 
 const prefixCls = 'inspect-pie-chart'
@@ -17,7 +18,7 @@ const enum ChartSize {
 }
 
 const Index: FC<Props> = (props) => {
-  const { list } = props
+  const { className, list } = props
 
   function renderLabel({ cx, cy, midAngle, innerRadius, outerRadius, percent, index }: PieLabelRenderProps) {
     const safeCx = cx ?? 0
@@ -41,7 +42,7 @@ const Index: FC<Props> = (props) => {
   }
 
   return (
-    <Block className={prefixCls} title="Chart">
+    <Block className={className} contentClassName={prefixCls} title="Chart">
       <PieChart width={ChartSize.WIDTH} height={ChartSize.HEIGHT}>
         <Pie
           data={list}
