@@ -1,6 +1,6 @@
 import { FC, ReactNode } from 'react'
 import './index.scss'
-import classnames from 'classnames'
+import { clsx } from 'clsx'
 import { createBEM } from '../../utils/bem'
 
 interface Props {
@@ -17,9 +17,9 @@ const bem = createBEM('page-block')
  */
 const Index: FC<Props> = ({ title, className, contentClassName, children }) => {
   return (
-    <div className={classnames(bem(), className)}>
+    <div className={clsx(bem(), className)}>
       {title && <div className={bem('title')}>{title}</div>}
-      <div className={classnames(bem('content'), contentClassName)}>{children}</div>
+      <div className={clsx(bem('content'), contentClassName)}>{children}</div>
     </div>
   )
 }
