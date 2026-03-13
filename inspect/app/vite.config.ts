@@ -20,7 +20,7 @@ export default defineConfig({
   },
   resolve: {
     alias: [{
-      find: '@', replacement: path.resolve(__dirname, './inspect/app'),
+      find: '@', replacement: path.resolve(__dirname),
     }],
   },
   build: {

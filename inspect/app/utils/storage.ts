@@ -1,72 +1,80 @@
 /**
- * this.space 桥接类，提供命名空间隔离的存储功能
+ * 命名空间存储类，管理一个大对象
  */
-export class StorageSpace {
-  space = localStorage
-  constructor(public name: string) {
+export class StorageSpace<T = Record<string, unknown>> {
+  /**
+   * 存储引擎，默认使用 localStorage
+   * @param spaceKey 存储空间名称
+   * @param defaultValue 默认值
+   * @param storage 存储引擎，默认使用 localStorage
+   */
+  constructor(
+    private readonly spaceKey: string,
+    private readonly defaultValue?: T,
+    private readonly storage: Storage = localStorage,
+  ) {
   }
 
   /**
-   * 生成带前缀的 key
+   * 获取存储空间名称
    */
-  private getKey(key: string): string {
-    return `${this.name}:${key}`
+  get name(): string {
+    return this.spaceKey
   }
 
   /**
-   * 获取值（自动 JSON 解析）
+   * 获取整个大对象
    */
-  get<T = unknown>(key: string, defaultValue?: T): T | undefined {
-    const value = this.space.getItem(this.getKey(key))
+  get() {
+    const value = this.storage.getItem(this.spaceKey)
+    const getDefaultValue = () => this.defaultValue ?? {} as T
     if (value === null) {
-      return defaultValue
+      return getDefaultValue()
     }
     try {
       return JSON.parse(value) as T
     } catch {
-      return defaultValue
+      return getDefaultValue()
     }
   }
 
   /**
-   * 设置值（自动 JSON 序列化）
+   * 设置整个大对象
    */
-  set<T = unknown>(key: string, value: T): void {
-    this.space.setItem(this.getKey(key), JSON.stringify(value))
+  set(value: T): void {
+    this.storage.setItem(this.spaceKey, JSON.stringify(value))
   }
 
   /**
-   * 获取原始字符串值
+   * 获取大对象中的某个属性
    */
-  getItem(key: string) {
-    return this.space.getItem(this.getKey(key))
+  getItem<K extends keyof T>(key: K): T[K] | undefined {
+    const data = this.get()
+    return data[key]
   }
 
   /**
-   * 设置原始字符串值
+   * 设置大对象中的某个属性
    */
-  setItem(key: string, value: string): void {
-    this.space.setItem(this.getKey(key), value)
+  setItem<K extends keyof T>(key: K, value: T[K]): void {
+    const data = this.get()
+    data[key] = value
+    this.set(data)
   }
 
   /**
-   * 移除指定 key
+   * 删除大对象中的某个属性
    */
-  remove(key: string): void {
-    this.space.removeItem(this.getKey(key))
+  remove<K extends keyof T>(key: K): void {
+    const data = this.get()
+    delete data[key]
+    this.set(data)
   }
 
   /**
-   * 清空当前空间的所有数据
+   * 清空整个大对象
    */
   clear(): void {
-    const keys: string[] = []
-    for (let i = 0; i < this.space.length; i++) {
-      const key = this.space.key(i)
-      if (key?.startsWith(`${this.name}:`)) {
-        keys.push(key)
-      }
-    }
-    keys.forEach(key => this.space.removeItem(key))
+    this.storage.removeItem(this.spaceKey)
   }
 }

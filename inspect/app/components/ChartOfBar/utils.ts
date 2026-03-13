@@ -10,7 +10,7 @@ export const prefixCls = 'inspect-bar-chart'
 const MAX_HISTORY = 100
 
 // 创建命名空间实例
-const storage = new StorageSpace(prefixCls)
+const storage = new StorageSpace<HistoryRecord[]>(prefixCls, [])
 
 function formatTime(date: Date) {
   const hours = date.getHours().toString().padStart(2, '0')
@@ -22,14 +22,14 @@ function formatTime(date: Date) {
  * 从 localStorage 加载历史记录
  */
 function loadHistory(): HistoryRecord[] {
-  return storage.get<HistoryRecord[]>('history', []) ?? []
+  return storage.get()
 }
 
 /**
  * 保存历史记录到 localStorage
  */
 function saveHistory(history: HistoryRecord[]) {
-  storage.set('history', history)
+  storage.set(history)
 }
 
 /**
