@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { StorageSpace } from '@/utils/storage.ts'
 
 export interface HistoryRecord {
   time: string;
@@ -6,8 +7,10 @@ export interface HistoryRecord {
 }
 
 export const prefixCls = 'inspect-bar-chart'
-const STORAGE_KEY = prefixCls
 const MAX_HISTORY = 100
+
+// 创建命名空间实例
+const storage = new StorageSpace(prefixCls)
 
 function formatTime(date: Date) {
   const hours = date.getHours().toString().padStart(2, '0')
@@ -18,21 +21,15 @@ function formatTime(date: Date) {
 /**
  * 从 localStorage 加载历史记录
  */
-function loadHistory() {
-  const stored = localStorage.getItem(STORAGE_KEY)
-  if (!stored) return []
-  try {
-    return JSON.parse(stored)
-  } catch {
-    return []
-  }
+function loadHistory(): HistoryRecord[] {
+  return storage.get<HistoryRecord[]>('history', []) ?? []
 }
 
 /**
  * 保存历史记录到 localStorage
  */
 function saveHistory(history: HistoryRecord[]) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(history))
+  storage.set('history', history)
 }
 
 /**
