@@ -1,0 +1,7 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+echo "📬 执行 post-commit 报告..."
+
+# 执行 Python 脚本生成报告并发送邮件
+python3 "$(git rev-parse --show-toplevel)/scripts/post_commit_report.py"
