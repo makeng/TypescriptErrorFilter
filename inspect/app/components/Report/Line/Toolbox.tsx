@@ -2,7 +2,6 @@ import { PropsWithChildren } from 'react'
 import { Button, Popover } from '@arco-design/web-react'
 import { message } from '../../Message'
 import { IconCopy } from '@arco-design/web-react/icon'
-import { head, last } from 'lodash-es'
 
 interface Props {
   txt: string;
@@ -10,24 +9,16 @@ interface Props {
   onChangeShow(nextShow: boolean): void;
 }
 
-const FILE_REG = /[\w\/.-]+\.[j|t]sx?\([\d,Z]+\)/
+const FILE_REG = /[\w/.-]+\.[jt]sx?\([\d,]+\)/
 const toastSuccess = (msg: string) => message.success(msg)
 
-const Toolbox: React.FC<PropsWithChildren<Props>> = (props) => {
-  const { children, txt, show } = props
-
-  function clickAnyBtn() {
-    props.onChangeShow(false)
-    return Promise.resolve()
-  }
-
+const Toolbox: React.FC<PropsWithChildren<Props>> = ({ children, txt, show, onChangeShow }) => {
   const btnList = [
     {
       text: 'Path',
       icon: <IconCopy />,
       click: (text: string) => {
-        const txtMathed = txt.match(FILE_REG)
-        const path = head(txtMathed) || ''
+        const path = txt.match(FILE_REG)?.[0] ?? ''
         navigator.clipboard.writeText(path)
         toastSuccess(`${text} copied!`)
       },
@@ -36,8 +27,7 @@ const Toolbox: React.FC<PropsWithChildren<Props>> = (props) => {
       text: 'Error',
       icon: <IconCopy />,
       click: (text: string) => {
-        const txtSplited = txt.split(FILE_REG)
-        const err = last(txtSplited) || ''
+        const err = txt.split(FILE_REG).at(-1) ?? ''
         navigator.clipboard.writeText(err)
         toastSuccess(`${text} copied!`)
       },
@@ -47,18 +37,18 @@ const Toolbox: React.FC<PropsWithChildren<Props>> = (props) => {
   return (
     <Popover
       popupVisible={show}
-      onVisibleChange={props.onChangeShow}
+      onVisibleChange={onChangeShow}
       trigger="hover"
       position="tl"
       content={<>
-        {btnList.map(({ text, icon, click }, index) => {
-          const isNotLast = index !== btnList.length - 1
-          return (
-            <Button
-              key={text} icon={icon} style={isNotLast ? { marginRight: '8px' } : undefined} size="small"
-              onClick={() => clickAnyBtn().then(() => click(text))}>{text}</Button>
-          )
-        })}
+        {btnList.map(({ text, icon, click }, index) => (
+          <Button
+            key={text} icon={icon}
+            style={index < btnList.length - 1 ? { marginRight: '8px' } : undefined}
+            size="small"
+            onClick={() => { onChangeShow(false); click(text) }}
+          >{text}</Button>
+        ))}
       </>}
     >
       {children}

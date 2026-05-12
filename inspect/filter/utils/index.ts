@@ -3,70 +3,56 @@ import { Files } from './config'
 import fs from 'fs/promises'
 import { ERROR_GROUP_MAP } from '../../index'
 
-const ANSI_COLOR_MAP = new Map<Color, string>([
-  [Color.Red, '\x1b[91m'],
-  [Color.Orange, '\x1b[38;5;208m'],
-  [Color.Green, '\x1b[32m'],
-  [Color.Cyan, '\x1b[36m'],
-])
+const ANSI_COLOR_MAP: Record<Color, string> = {
+  [Color.Red]: '\x1b[91m',
+  [Color.Orange]: '\x1b[38;5;208m',
+  [Color.Green]: '\x1b[32m',
+  [Color.Cyan]: '\x1b[36m',
+}
 
-/**
- * Print colorful message
- */
+/** Print colorful message */
 export function consoleColor(color: Color, ...args: unknown[]) {
-  const ansiCode = ANSI_COLOR_MAP.get(color)
+  const ansiCode = ANSI_COLOR_MAP[color]
   if (ansiCode) {
     console.log(ansiCode, ...args)
   }
 }
 
-/**
- * Read log files
- * @param logFiles
- */
+/** Read log files and extract lines starting with TARGET prefix */
 export async function readLogsInTargetFolder(logFiles: string[]) {
-  const res: string[] = [] // Split the file content into lines
-  const pushIntoErrorLines = (txt: string) => {
-    // 使用 \n 分割，速度更快且符合“按行分割”的意图
-    const lines = txt.split('\n')
-    lines.forEach((line) => {
-      if (line && line.startsWith(Files.TARGET)) {
-        res.push(line)
-      }
-    })
-  }
-
-  // 3. [优化] 使用 Promise.all 并行读取所有文件
-  const allFilePromises = logFiles.map(file =>
-    fs.readFile(file, { encoding: 'utf8' }).then(pushIntoErrorLines),
+  const contents = await Promise.all(
+    logFiles.map(file => fs.readFile(file, { encoding: 'utf8' })),
   )
-
-  await Promise.all(allFilePromises)
-  return res
+  return contents.flatMap(txt =>
+    txt.split('\n').filter(line => line.startsWith(Files.TARGET)),
+  )
 }
 
 /**
- * Create a map of grouped errors
- * @param errorLines
+ * Create a map of grouped errors.
+ * Each line matches at most ONE error pattern (first match wins, by color priority).
  */
 export function creatGroupedMap(errorLines: string[]) {
-  const allColors = Object.values(Color).reverse() // Place the most important color at the bottom for better readability.
-  const res = new Map<Color, string[]>(allColors.map((color) => [color, []]))
+  const res = new Map<Color, string[]>(
+    Object.values(Color).reverse().map(color => [color, [] as string[]]),
+  )
 
-  const collector = (line: string) =>
-    ERROR_GROUP_MAP.forEach((fatalError, color) => {
-      let isBreak = false
-      fatalError.forEach(({ title, txtRegList }) => {
-        if (isBreak) return
-        txtRegList.forEach((reg) => {
-          const targetListOfColor = res.get(color) as string[]
+  for (const line of errorLines) {
+    let matched = false
+    for (const [color, fatalErrors] of ERROR_GROUP_MAP) {
+      if (matched) break
+      for (const { title, txtRegList } of fatalErrors) {
+        if (matched) break
+        for (const reg of txtRegList) {
           if (reg.test(line)) {
-            targetListOfColor.push(`${title}: ${line}`)
-            isBreak = true
+            res.get(color)!.push(`${title}: ${line}`)
+            matched = true
+            break
           }
-        })
-      })
-    })
-  errorLines.forEach(collector)
+        }
+      }
+    }
+  }
+
   return res
 }

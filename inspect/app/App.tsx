@@ -5,7 +5,6 @@ import ChartOfPie from './components/ChartOfPie'
 import Report from './components/Report'
 import ChartOfBar from './components/ChartOfBar'
 // fn
-import { entries } from 'lodash-es'
 import { Color } from '../filter/types'
 // 使用 import 导入 JSON 文件 (Vite 支持)
 import errorReportJson from '../dist/error-log.json'
@@ -17,34 +16,24 @@ export type DataItem = {
   lines: string[];
 }
 
-// 定义 JSON 数据的类型
-interface ErrorLogJson {
-  [key: string]: string[];
-}
-
 function App() {
   const [color, setColor] = useState<Color>(Color.Red)
 
-  const data = entries(errorReportJson as ErrorLogJson)
+  const data = Object.entries(errorReportJson as Record<string, string[]>)
     .reverse()
-    .map(([key, value]) => {
-      const itemColor = key as Color
-      return ({
-        name: key,
-        value: value.length,
-        color: itemColor,
-        lines: value,
-      }) satisfies DataItem
-    })
+    .map(([key, value]) => ({
+      name: key,
+      value: value.length,
+      color: key as Color,
+      lines: value,
+    }) satisfies DataItem)
 
-  // 计算当前警告总量
   const totalWarnings = data.reduce((sum, item) => sum + item.value, 0)
 
   useEffect(() => {
-    window.document.body.setAttribute('arco-theme', 'dark') // 设置为暗黑主题
+    document.body.setAttribute('arco-theme', 'dark')
   }, [])
 
-  console.log(data)
   return (
     <div className="app">
       <div className="flex">

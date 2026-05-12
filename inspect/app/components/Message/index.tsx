@@ -1,18 +1,16 @@
 import { ReactNode, useEffect, useState } from 'react'
 import { createRoot } from 'react-dom/client'
 import { IconCheckSquare } from '@arco-design/web-react/icon'
-import { EscapeStr } from '../../utils/const'
 
-type MessageType = 'info' | 'success' | 'error' | 'warning';
+export type MessageType = 'info' | 'success' | 'error' | 'warning'
 
 interface MessageOptions {
-  type: MessageType;
-  content: string;
-  duration?: number;
+  type: MessageType
+  content: string
+  duration?: number
 }
 
-const messageQueue: MessageOptions[] = []
-
+let addMessageFn: ((msg: MessageOptions) => void) | null = null
 let container: HTMLDivElement | null = null
 let root: ReturnType<typeof createRoot> | null = null
 
@@ -20,18 +18,13 @@ const MessageList: React.FC = () => {
   const [messages, setMessages] = useState<MessageOptions[]>([])
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      if (messageQueue.length > 0) {
-        const next = messageQueue.shift()!
-        setMessages((prev) => [...prev, next])
-
-        setTimeout(() => {
-          setMessages((prev) => prev.slice(1))
-        }, next.duration || 3000)
-      }
-    }, 100)
-
-    return () => clearInterval(interval)
+    addMessageFn = (msg) => {
+      setMessages((prev) => [...prev, msg])
+      setTimeout(() => {
+        setMessages((prev) => prev.filter(m => m !== msg))
+      }, msg.duration ?? 3000)
+    }
+    return () => { addMessageFn = null }
   }, [])
 
   return (
@@ -39,7 +32,7 @@ const MessageList: React.FC = () => {
       {messages.map((msg, i) => (
         <div key={i} style={{ ...styles.message, ...styles[msg.type] }}>
           {iconMap.get(msg.type)}
-          {EscapeStr.SPACE}
+          {'\xa0'}
           {msg.content}
         </div>
       ))}
@@ -80,27 +73,20 @@ const iconMap = new Map<MessageType, ReactNode>([
 const init = () => {
   if (!container) {
     container = document.createElement('div')
-    window.document.body.appendChild(container)
+    document.body.appendChild(container)
     root = createRoot(container)
     root.render(<MessageList />)
   }
 }
 
+const push = (type: MessageType, content: string, duration?: number) => {
+  init()
+  addMessageFn?.({ type, content, duration })
+}
+
 export const message = {
-  info(content: string, duration?: number) {
-    init()
-    messageQueue.push({ type: 'info', content, duration })
-  },
-  success(content: string, duration?: number) {
-    init()
-    messageQueue.push({ type: 'success', content, duration })
-  },
-  error(content: string, duration?: number) {
-    init()
-    messageQueue.push({ type: 'error', content, duration })
-  },
-  warning(content: string, duration?: number) {
-    init()
-    messageQueue.push({ type: 'warning', content, duration })
-  },
+  info: (content: string, duration?: number) => push('info', content, duration),
+  success: (content: string, duration?: number) => push('success', content, duration),
+  error: (content: string, duration?: number) => push('error', content, duration),
+  warning: (content: string, duration?: number) => push('warning', content, duration),
 }

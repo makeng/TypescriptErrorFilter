@@ -17,26 +17,15 @@ const enum ChartSize {
   HEIGHT = 250,
 }
 
-const Index: FC<Props> = (props) => {
-  const { className, list } = props
-
-  function renderLabel({ cx, cy, midAngle, innerRadius, outerRadius, percent, index }: PieLabelRenderProps) {
-    const safeCx = cx ?? 0
-    const safeCy = cy ?? 0
-    const safeMidAngle = midAngle ?? 0
-    const safeInnerRadius = innerRadius ?? 0
-    const safeOuterRadius = outerRadius ?? 0
-    const safePercent = percent ?? 0
-    const safeIndex = index ?? 0
-
-    const radius = safeInnerRadius + (safeOuterRadius - safeInnerRadius) + 30
-    const x = safeCx + radius * Math.cos(-safeMidAngle * RADIAN)
-    const y = safeCy + radius * Math.sin(-safeMidAngle * RADIAN)
-    const percentStr = `${(safePercent * 100).toFixed(0)}%`
-    const { value, color } = list[safeIndex] || {}
+const Index: FC<Props> = ({ className, list, onMouseEnterSection }) => {
+  function renderLabel({ cx = 0, cy = 0, midAngle = 0, innerRadius = 0, outerRadius = 0, percent = 0, index = 0 }: PieLabelRenderProps) {
+    const radius = innerRadius + (outerRadius - innerRadius) + 30
+    const x = cx + radius * Math.cos(-midAngle * RADIAN)
+    const y = cy + radius * Math.sin(-midAngle * RADIAN)
+    const { value, color } = list[index] ?? {}
     return (
-      <text x={x} y={y} fill="white" textAnchor={x > safeCx ? 'start' : 'end'} dominantBaseline="central">
-        {`${color}: ${value} (${percentStr})`}
+      <text x={x} y={y} fill="white" textAnchor={x > cx ? 'start' : 'end'} dominantBaseline="central">
+        {`${color}: ${value} (${(percent * 100).toFixed(0)}%)`}
       </text>
     )
   }
@@ -54,9 +43,7 @@ const Index: FC<Props> = (props) => {
           dataKey="value"
           onMouseEnter={(_data: PieSectorDataItem, index: number, _e: MouseEvent<SVGGraphicsElement>) => {
             const item = list[index]
-            if (item) {
-              props.onMouseEnterSection(item)
-            }
+            if (item) onMouseEnterSection(item)
           }}
         >
           {list.map((entry, index) => (
