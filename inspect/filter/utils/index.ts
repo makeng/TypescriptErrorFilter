@@ -21,7 +21,13 @@ export function consoleColor(color: Color, ...args: unknown[]) {
 /** Read log files and extract lines starting with TARGET prefix */
 export async function readLogsInTargetFolder(logFiles: string[]) {
   const contents = await Promise.all(
-    logFiles.map(file => fs.readFile(file, { encoding: 'utf8' })),
+    logFiles.map(async file => {
+      try {
+        return await fs.readFile(file, { encoding: 'utf8' })
+      } catch {
+        return '' // 文件不存在时跳过，兼容日志开关切换
+      }
+    }),
   )
   return contents.flatMap(txt =>
     txt.split('\n').filter(line => line.startsWith(Files.TARGET)),

@@ -32,6 +32,10 @@ function App() {
 
   useEffect(() => {
     document.body.setAttribute('arco-theme', 'dark')
+    const projectName = import.meta.env.VITE_PROJECT_NAME
+    if (projectName) {
+      document.title = `${projectName} - 错误报告`
+    }
   }, [])
 
   return (

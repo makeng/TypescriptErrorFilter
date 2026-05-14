@@ -9,8 +9,12 @@ export interface HistoryRecord {
 export const prefixCls = 'inspect-bar-chart'
 const MAX_HISTORY = 100
 
+// 用宿主项目名做命名空间，避免多项目历史数据混合
+const projectName = import.meta.env.VITE_PROJECT_NAME || 'default'
+const storageKey = `${prefixCls}-${projectName}`
+
 // 创建命名空间实例
-const storage = new StorageSpace<HistoryRecord[]>(prefixCls, [])
+const storage = new StorageSpace<HistoryRecord[]>(storageKey, [])
 
 function formatTime(date: Date) {
   const hours = date.getHours().toString().padStart(2, '0')

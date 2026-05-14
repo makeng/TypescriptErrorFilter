@@ -33,6 +33,16 @@ declare module '*.json' {
 declare module '@kdcloudjs/kdesign-icons';
 
 /* Expend */
+/// <reference types="vite/client" />
+
+interface ImportMetaEnv {
+  readonly VITE_PROJECT_NAME: string;
+}
+
+interface ImportMeta {
+  readonly env: ImportMetaEnv;
+}
+
 interface Window {
   initGeetest: (arg: Obj, cb: (captchaObj: Obj) => void) => void;
   wx: Obj;
