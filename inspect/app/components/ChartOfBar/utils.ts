@@ -13,6 +13,11 @@ export interface ChartData extends HistoryRecord {
   delta?: number;
 }
 
+export function deltaColor(delta: number | undefined) {
+  if (delta === undefined) return '#888'
+  return delta > 0 ? '#ff4d4f' : delta < 0 ? '#52c41a' : '#888'
+}
+
 // 用宿主项目名做命名空间，避免多项目历史数据混合
 const projectName = import.meta.env.VITE_PROJECT_NAME || 'default'
 const storageKey = `${prefixCls}-${projectName}`

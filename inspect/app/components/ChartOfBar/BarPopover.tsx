@@ -2,17 +2,13 @@ import { type FC, useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import { Button } from '@arco-design/web-react'
 import { type ChartData, type ClickState } from './utils'
+import BarInfo from './BarInfo'
 
 interface Props {
   clicked: ClickState | null;
   data: ChartData | null;
   onClose: () => void;
   onRemove: (time: string) => void;
-}
-
-const deltaColor = (delta: number | undefined) => {
-  if (delta === undefined) return '#888'
-  return delta > 0 ? '#ff4d4f' : delta < 0 ? '#52c41a' : '#888'
 }
 
 const PANEL_WIDTH = 180
@@ -56,15 +52,7 @@ const BarPopover: FC<Props> = ({ clicked, data, onClose, onRemove }) => {
         boxShadow: '0 4px 12px rgba(0,0,0,0.4)',
       }}
     >
-      <p style={{ margin: 0, color: '#aaa' }}>{data.time}</p>
-      <p style={{ margin: '6px 0 0' }}>
-        警告数量: <strong style={{ color: '#61dafb' }}>{data.total}</strong>
-      </p>
-      {data.delta !== undefined && (
-        <p style={{ margin: '4px 0 0', color: deltaColor(data.delta) }}>
-          趋势: {data.delta > 0 ? '+' : ''}{data.delta}
-        </p>
-      )}
+      <BarInfo data={data} />
       <Button
         type="outline"
         status="danger"
