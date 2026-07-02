@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { StorageSpace } from '@/utils/storage.ts'
 
 export interface HistoryRecord {
@@ -9,6 +9,10 @@ export interface HistoryRecord {
 export const prefixCls = 'inspect-bar-chart'
 const MAX_HISTORY = 100
 
+export interface ChartData extends HistoryRecord {
+  delta?: number;
+}
+
 // 用宿主项目名做命名空间，避免多项目历史数据混合
 const projectName = import.meta.env.VITE_PROJECT_NAME || 'default'
 const storageKey = `${prefixCls}-${projectName}`
@@ -17,9 +21,12 @@ const storageKey = `${prefixCls}-${projectName}`
 const storage = new StorageSpace<HistoryRecord[]>(storageKey, [])
 
 function formatTime(date: Date) {
+  const year = date.getFullYear()
+  const month = (date.getMonth() + 1).toString().padStart(2, '0')
+  const day = date.getDate().toString().padStart(2, '0')
   const hours = date.getHours().toString().padStart(2, '0')
   const minutes = date.getMinutes().toString().padStart(2, '0')
-  return `${hours}:${minutes}`
+  return `${year}-${month}-${day} ${hours}:${minutes}`
 }
 
 /**
@@ -46,7 +53,7 @@ function addRecord(history: HistoryRecord[], total: number) {
     total,
   }
 
-  // 使用 Map 去重（同一分钟内的记录只保留最新的）
+  // 使用 Map 去重（同一分钟内的记录只保留最新的，key 包含年月日时分）
   const historyMap = new Map<string, HistoryRecord>(
     [...history, newRecord].map(r => [r.time, r]),
   )
@@ -55,24 +62,32 @@ function addRecord(history: HistoryRecord[], total: number) {
   return [...historyMap.values()].slice(-MAX_HISTORY)
 }
 
+function removeRecord(history: HistoryRecord[], time: string): HistoryRecord[] {
+  return history.filter(r => r.time !== time)
+}
+
 /**
  * Hook: 管理历史警告记录
  * @param totalWarnings 当前警告总量
- * @returns 历史记录数组
+ * @returns history 历史记录数组, remove 删除指定记录
  */
 export function useWarningHistory(totalWarnings: number) {
   const [history, setHistory] = useState<HistoryRecord[]>([])
 
   useEffect(() => {
-    // 从 localStorage 加载历史记录
     const loadedHistory = loadHistory()
-
-    // 添加当前执行记录
     const updatedHistory = addRecord(loadedHistory, totalWarnings)
-
     setHistory(updatedHistory)
     saveHistory(updatedHistory)
   }, [totalWarnings])
 
-  return history
+  const remove = useCallback((time: string) => {
+    setHistory(prev => {
+      const updated = removeRecord(prev, time)
+      saveHistory(updated)
+      return updated
+    })
+  }, [])
+
+  return { history, remove }
 }
