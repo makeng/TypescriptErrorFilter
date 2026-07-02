@@ -91,3 +91,22 @@ export function useWarningHistory(totalWarnings: number) {
 
   return { history, remove }
 }
+
+export interface ClickState {
+  time: string;
+  x: number;
+  y: number;
+}
+
+/**
+ * Hook: 管理柱子点击选中态（含屏幕坐标）
+ * @returns clicked 当前选中信息, select 选中, clear 清除
+ */
+export function useBarClick() {
+  const [clicked, setClicked] = useState<ClickState | null>(null)
+  const select = useCallback((time: string, x: number, y: number) => {
+    setClicked(prev => prev?.time === time ? null : { time, x, y })
+  }, [])
+  const clear = useCallback(() => setClicked(null), [])
+  return { clicked, select, clear }
+}
